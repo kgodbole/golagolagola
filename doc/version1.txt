@@ -1,0 +1,71 @@
+no nesting, only arithmetic operations and assignment,
+dynamically typed, print and read, only integer values,
+variable/tag names consist of only lowercase letters,
+no parentheses and no overriding of operator precedence.
+
+
+1. Grammar
+
+# blank lines are ignored
+# only one statement per line
+
+variable: string of lowercase characters
+number: integer
+operator: +,-,*,/
+
+term ->
+    variable |
+    number
+
+expression ->
+    term |
+    expression operator term
+
+assignment ->
+    variable '=' expression
+
+output ->
+    'print' expression
+
+input ->
+    'read' variable
+
+statement ->
+    assignment |
+    output |
+    input
+
+
+2. Expression evaluation
+
+use a stack
+for each character in the expression
+    if character is a term
+        push it on the stack
+    else if it is an operator 'op1'
+        if op1 has <= precedence than topop
+            while op1 <= precedence than topop and len(stack) >= 3
+                pop top 3 elements from stack
+                if operands are variables, lookup their current values
+                evaluate the 3-element sub-expression
+                topop = current top-of-stack
+                push the result back on the stack
+            push op1 on the stack
+            topop = op1
+        else
+            push op1 on the stack
+            topop = op1
+    else
+        invalid syntax
+
+while len(stack) > 1
+    pop top 3 elements from stack
+    evaluate this sub-expression
+    push the result back on the stack
+
+final_result = pop the single element in the stack
+
+
+3. Mapping variables to values
+
+a hash is used to maintain current value of a variable
